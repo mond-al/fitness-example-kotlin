@@ -1,0 +1,2 @@
+include ':FitnessExample'
+rootProject.name = "FitnessExample"
