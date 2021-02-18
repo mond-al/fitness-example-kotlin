@@ -1,49 +1,51 @@
-package function;
+package function
 
-import fitnesse.responders.run.SuiteResponder;
-import fitnesse.wiki.*;
+import fitnesse.responders.run.SuiteResponder
+import fitnesse.wiki.PageCrawlerImpl
+import fitnesse.wiki.PageData
+import fitnesse.wiki.PathParser
 
-public class FitnessExample {
-    public String testableHtml(PageData pageData, boolean includeSuiteSetup) throws Exception {
-        WikiPage wikiPage = pageData.getWikiPage();
-        StringBuffer buffer = new StringBuffer();
-
+class FitnessExample {
+    @Throws(Exception::class)
+    fun testableHtml(pageData: PageData, includeSuiteSetup: Boolean): String {
+        val wikiPage = pageData.wikiPage
+        val buffer = StringBuffer()
         if (pageData.hasAttribute("Test")) {
             if (includeSuiteSetup) {
-                WikiPage suiteSetup = PageCrawlerImpl.getInheritedPage(SuiteResponder.SUITE_SETUP_NAME, wikiPage);
+                val suiteSetup =
+                    PageCrawlerImpl.getInheritedPage(SuiteResponder.SUITE_SETUP_NAME, wikiPage)
                 if (suiteSetup != null) {
-                    WikiPagePath pagePath = wikiPage.getPageCrawler().getFullPath(suiteSetup);
-                    String pagePathName = PathParser.render(pagePath);
-                    buffer.append("!include -setup .").append(pagePathName).append("\n");
+                    val pagePath = wikiPage.pageCrawler.getFullPath(suiteSetup)
+                    val pagePathName = PathParser.render(pagePath)
+                    buffer.append("!include -setup .").append(pagePathName).append("\n")
                 }
             }
-            WikiPage setup = PageCrawlerImpl.getInheritedPage("SetUp", wikiPage);
+            val setup = PageCrawlerImpl.getInheritedPage("SetUp", wikiPage)
             if (setup != null) {
-                WikiPagePath setupPath = wikiPage.getPageCrawler().getFullPath(setup);
-                String setupPathName = PathParser.render(setupPath);
-                buffer.append("!include -setup .").append(setupPathName).append("\n");
+                val setupPath = wikiPage.pageCrawler.getFullPath(setup)
+                val setupPathName = PathParser.render(setupPath)
+                buffer.append("!include -setup .").append(setupPathName).append("\n")
             }
         }
-
-        buffer.append(pageData.getContent());
+        buffer.append(pageData.content)
         if (pageData.hasAttribute("Test")) {
-            WikiPage teardown = PageCrawlerImpl.getInheritedPage("TearDown", wikiPage);
+            val teardown = PageCrawlerImpl.getInheritedPage("TearDown", wikiPage)
             if (teardown != null) {
-                WikiPagePath tearDownPath = wikiPage.getPageCrawler().getFullPath(teardown);
-                String tearDownPathName = PathParser.render(tearDownPath);
-                buffer.append("!include -teardown .").append(tearDownPathName).append("\n");
+                val tearDownPath = wikiPage.pageCrawler.getFullPath(teardown)
+                val tearDownPathName = PathParser.render(tearDownPath)
+                buffer.append("!include -teardown .").append(tearDownPathName).append("\n")
             }
             if (includeSuiteSetup) {
-                WikiPage suiteTeardown = PageCrawlerImpl.getInheritedPage(SuiteResponder.SUITE_TEARDOWN_NAME, wikiPage);
+                val suiteTeardown =
+                    PageCrawlerImpl.getInheritedPage(SuiteResponder.SUITE_TEARDOWN_NAME, wikiPage)
                 if (suiteTeardown != null) {
-                    WikiPagePath pagePath = wikiPage.getPageCrawler().getFullPath(suiteTeardown);
-                    String pagePathName = PathParser.render(pagePath);
-                    buffer.append("!include -teardown .").append(pagePathName).append("\n");
+                    val pagePath = wikiPage.pageCrawler.getFullPath(suiteTeardown)
+                    val pagePathName = PathParser.render(pagePath)
+                    buffer.append("!include -teardown .").append(pagePathName).append("\n")
                 }
             }
         }
-
-        pageData.setContent(buffer.toString());
-        return pageData.getHtml();
+        pageData.content = buffer.toString()
+        return pageData.html
     }
 }
